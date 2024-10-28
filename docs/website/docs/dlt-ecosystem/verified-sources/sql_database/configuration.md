@@ -46,7 +46,7 @@ Read more about sources and resources here: [General usage: source](../../../gen
     ```
 
 2. **Load select tables from a database**
-    Calling `sql_database().with_resources("family", "clan")` loads only the tables `"family"` and `"clan"` from the database.
+    Calling `sql_database().s("family", "clan")` loads only the tables `"family"` and `"clan"` from the database.
 
     ```py
     import dlt
@@ -61,7 +61,7 @@ Read more about sources and resources here: [General usage: source](../../../gen
         )
 
         # Fetch tables "family" and "clan"
-        source = sql_database().with_resources("family", "clan")
+        source = sql_database().s("family", "clan")
 
         # Run the pipeline
         info = pipeline.run(source)
@@ -143,7 +143,7 @@ credentials = ConnectionStringCredentials(
     "mysql+pymysql://rfamro@mysql-rfam-public.ebi.ac.uk:4497/Rfam"
 )
 
-source = sql_database(credentials).with_resource("family")
+source = sql_database(credentials).with_resources("family")
 ```
 
 :::note
