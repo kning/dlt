@@ -59,6 +59,7 @@ TEmbeddingProvider = Literal[
     "sentence-transformers",
     "huggingface",
     "colbert",
+    "ollama"
 ]
 
 
@@ -85,6 +86,8 @@ class LanceDBClientConfiguration(DestinationClientDwhConfiguration):
     """The model used by the embedding provider for generating embeddings.
     Check with the embedding provider which options are available.
     Reference https://lancedb.github.io/lancedb/embeddings/default_embedding_functions/."""
+    embedding_model_provider_host: Optional[str] = None
+    """Custom host for embedding model provider (for example, Ollama)."""
     embedding_model_dimensions: Optional[int] = None
     """The dimensions of the embeddings generated. In most cases it will be automatically inferred, by LanceDB,
     but it is configurable in rare cases.
@@ -101,6 +104,7 @@ class LanceDBClientConfiguration(DestinationClientDwhConfiguration):
     __config_gen_annotations__: ClassVar[List[str]] = [
         "embedding_model",
         "embedding_model_provider",
+        "embedding_model_provider_host",
     ]
 
     def fingerprint(self) -> str:
@@ -109,3 +113,10 @@ class LanceDBClientConfiguration(DestinationClientDwhConfiguration):
         if self.credentials and self.credentials.uri:
             return digest128(self.credentials.uri)
         return ""
+
+    def get_embedding_host(self) -> str:
+        """Returns the appropriate host for embedding model provider, with custom host for Ollama if set."""
+        if self.embedding_model_provider == "ollama" and self.embedding_model_provider_host:
+            return self.embedding_model_provider_host
+        # Default to localhost if no custom host is provided
+        return "localhost:11434"

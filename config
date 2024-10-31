@@ -1,0 +1,9 @@
+# Read more about SSH config files: https://linux.die.net/man/5/ssh_config
+Host ALD 
+    HostName cadpc01.ee.columbia.edu
+    User mhr2154
+
+Host github.com
+  Hostname ssh.github.com
+  Port 443
+

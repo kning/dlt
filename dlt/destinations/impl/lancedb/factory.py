@@ -1,4 +1,5 @@
 import typing as t
+import os
 
 from dlt.common.destination import Destination, DestinationCapabilitiesContext
 from dlt.common.destination.capabilities import DataTypeMapper
@@ -19,6 +20,19 @@ except MissingDependencyException:
 
 if t.TYPE_CHECKING:
     from dlt.destinations.impl.lancedb.lancedb_client import LanceDBClient
+
+
+# Define function to get embedding model provider and host
+def get_embedding_model_provider():
+    provider = os.getenv("DESTINATION__LANCEDB__EMBEDDING_MODEL_PROVIDER")
+    provider_host = os.getenv("DESTINATION__LANCEDB__EMBEDDING_MODEL_PROVIDER_HOST")
+    
+    if provider == "ollama" and provider_host:
+        model_host = provider_host
+    else:
+        model_host = "localhost:11434"
+    
+    return provider, model_host
 
 
 class lancedb(Destination[LanceDBClientConfiguration, "LanceDBClient"]):
@@ -55,11 +69,19 @@ class lancedb(Destination[LanceDBClientConfiguration, "LanceDBClient"]):
         credentials: t.Union[LanceDBCredentials, t.Dict[str, t.Any]] = None,
         destination_name: t.Optional[str] = None,
         environment: t.Optional[str] = None,
+        provider: t.Optional[str] = None,
+        embedding_host: t.Optional[str] = None,
         **kwargs: t.Any,
     ) -> None:
         super().__init__(
             credentials=credentials,
             destination_name=destination_name,
             environment=environment,
+            provider = provider,
+            embedding_host = embedding_host,
             **kwargs,
         )
+        # Retrieve and use the embedding host based on the provider
+        provider, embedding_host = get_embedding_model_provider()
+        print(f"Using embedding provider: {provider} with host: {embedding_host}")
+

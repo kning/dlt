@@ -136,6 +136,7 @@ class LanceDBClient(JobClientBase, WithStateSync):
 
     model_func: TextEmbeddingFunction
 
+    # NOTE : Need to update init here
     def __init__(
         self,
         schema: Schema,
